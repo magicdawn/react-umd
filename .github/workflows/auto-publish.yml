@@ -19,6 +19,7 @@ jobs:
         with:
           node-version: lts/*
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
 
       # update react
       - run: pnpx npm-check-updates -u 'react-*'
@@ -75,6 +76,6 @@ jobs:
 
       # 发布到 npm
       - name: Publish to NPM
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
