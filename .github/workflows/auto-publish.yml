@@ -21,9 +21,15 @@ jobs:
 
       # update react
       - run: pnpx npm-check-updates -u 'react-*'
-
-      # install
       - run: pnpm install
+
+      # 更新 package.json version 字段
+      - name: Update package version
+        run: |
+          # 获取 react 版本号 (去掉 ^ 前缀)
+          REACT_VERSION=$(node -p "require('./package.json').dependencies.react.replace('^', '')")
+          # 更新 package.json version 字段
+          npm version $REACT_VERSION --no-git-tag-version --allow-same-version
 
       # check updated
       - name: Check for changes
@@ -43,14 +49,6 @@ jobs:
           gh run watch ${{ github.run_id }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # 更新 package.json version 字段
-      - name: Update package version
-        run: |
-          # 获取 react 版本号 (去掉 ^ 前缀)
-          REACT_VERSION=$(node -p "require('./package.json').dependencies.react.replace('^', '')")
-          # 更新 package.json version 字段
-          npm version $REACT_VERSION --no-git-tag-version --allow-same-version
 
       # 下方为 直接 push 到目标分支, 当然你也可以选择 Pull Request 方式
       - name: Commit files
