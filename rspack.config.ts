@@ -1,81 +1,88 @@
-import { Configuration } from '@rspack/core'
 import fse from 'fs-extra'
+import { defineConfig } from '@rspack/cli'
+import {
+  SwcJsMinimizerRspackPlugin,
+  type MultiRspackOptions,
+  type RspackOptions,
+} from '@rspack/core'
+import { cpus } from 'os'
+import { merge } from 'webpack-merge'
+import { pick } from 'es-toolkit'
 
-function defineConfig(...configs: Configuration[]) {
-  return configs
-}
+export default defineConfig((env, argv) => {
+  // clean dir
+  fse.emptyDirSync(__dirname + '/dist')
 
-fse.emptyDirSync(__dirname + '/dist')
-
-const minify = true
-
-export default defineConfig(
-  {
-    entry: {
-      react: './src/react.ts',
-    },
-    output: {
-      // clean: true,
-      filename: '[name].umd.js',
-      library: {
-        type: 'umd',
-        name: 'React',
-      },
-    },
+  // use `--mode development` to disable minify
+  const shared: RspackOptions = {
     optimization: {
-      minimize: minify,
+      minimizer: [
+        new SwcJsMinimizerRspackPlugin({
+          extractComments: true,
+        }),
+      ],
     },
-  },
-  {
-    entry: {
-      'react-dom': './src/react-dom.ts',
+  }
+
+  const externals = {
+    'react': {
+      root: 'React',
+      amd: 'react',
+      commonjs: 'react',
+      commonjs2: 'react',
     },
-    externals: {
-      react: {
-        root: 'React',
-        amd: 'react',
-        commonjs: 'react',
-        commonjs2: 'react',
+    'react-dom': {
+      root: 'ReactDOM',
+      amd: 'react-dom',
+      commonjs: 'react-dom',
+      commonjs2: 'react-dom',
+    },
+  }
+
+  const arr: MultiRspackOptions = [
+    {
+      ...shared,
+      entry: {
+        react: './src/react.ts',
+      },
+      output: {
+        filename: '[name].umd.js',
+        library: {
+          type: 'umd',
+          name: 'React',
+        },
       },
     },
-    output: {
-      filename: '[name].umd.js',
-      library: {
-        type: 'umd',
-        name: 'ReactDOM',
+    {
+      ...shared,
+      entry: {
+        'react-dom': './src/react-dom.ts',
+      },
+      externals: pick(externals, ['react']),
+      output: {
+        filename: '[name].umd.js',
+        library: {
+          type: 'umd',
+          name: 'ReactDOM',
+        },
       },
     },
-    optimization: {
-      minimize: minify,
-    },
-  },
-  {
-    entry: {
-      'react-dom-client': './src/react-dom-client.ts',
-    },
-    externals: {
-      'react': {
-        root: 'React',
-        amd: 'react',
-        commonjs: 'react',
-        commonjs2: 'react',
+    {
+      ...shared,
+      entry: {
+        'react-dom-client': './src/react-dom-client.ts',
       },
-      'react-dom': {
-        root: 'ReactDOM',
-        amd: 'react-dom',
-        commonjs: 'react-dom',
-        commonjs2: 'react-dom',
+      externals,
+      output: {
+        filename: '[name].umd.js',
+        library: {
+          type: 'umd',
+          name: 'ReactDOMClient',
+        },
       },
     },
-    output: {
-      filename: '[name].umd.js',
-      library: {
-        type: 'umd',
-        name: 'ReactDOMClient',
-      },
-    },
-    optimization: {
-      minimize: minify,
-    },
-  },
-)
+  ]
+
+  arr.parallelism = cpus().length
+  return arr
+})

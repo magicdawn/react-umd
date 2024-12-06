@@ -22,8 +22,6 @@ But this is a complicate world, some places still use UMD.
 
 ## Todo
 
-- [ ] make the build right
-  - [ ] with meta license
 - [ ] version align to react
 - [ ] automaticly publish
 

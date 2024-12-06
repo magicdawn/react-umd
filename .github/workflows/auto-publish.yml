@@ -1,0 +1,67 @@
+name: auto-publish
+
+on:
+  schedule: # Run workflow automatically
+    - cron: '0 0 * * *' # Runs daily at midnight UTC
+  workflow_dispatch: # Run workflow manually (without waiting for the cron to be called), through the Github Actions Workflow page directly
+
+jobs:
+  check-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'pnpm'
+
+      # update react
+      - run: pnpm ncu -u 'react-*'
+
+      # install
+      - run: pnpm install
+
+      # check updated
+      - name: Check for changes
+        run: |
+          if git diff --exit-code; then
+            echo "No changes detected, exiting..."
+            exit 0
+          fi
+
+      # 更新 package.json version 字段
+      - name: Update package version
+        run: |
+          # 获取 react 版本号 (去掉 ^ 前缀)
+          REACT_VERSION=$(node -p "require('./package.json').dependencies.react.replace('^', '')")
+          # 更新 package.json version 字段
+          npm version $REACT_VERSION --no-git-tag-version --allow-same-version
+
+      # 下方为 直接 push 到目标分支, 当然你也可以选择 Pull Request 方式
+      - name: Commit files
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --staged --quiet || git commit -m "deps: upgrade react to v$REACT_VERSION"
+
+      # 创建并推送 tag
+      - name: Create tag
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          git tag -f v$VERSION
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          force: true
+          tags: true
+
+      # 发布到 npm
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
