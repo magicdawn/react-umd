@@ -5,6 +5,9 @@ on:
     - cron: '0 0 * * *' # Runs daily at midnight UTC
   workflow_dispatch: # Run workflow manually (without waiting for the cron to be called), through the Github Actions Workflow page directly
 
+permissions:
+  actions: 'write'
+
 jobs:
   check-update:
     runs-on: ubuntu-latest
@@ -24,11 +27,22 @@ jobs:
 
       # check updated
       - name: Check for changes
+        id: check_changes
         run: |
           if git diff --exit-code; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
             echo "No changes detected, exiting..."
-            exit 0
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
+
+      - name: Early exit
+        if: steps.check_changes.outputs.has_changes == 'false'
+        run: |
+          gh run cancel ${{ github.run_id }}
+          gh run watch ${{ github.run_id }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # 更新 package.json version 字段
       - name: Update package version
