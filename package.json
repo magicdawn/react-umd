@@ -1,6 +1,6 @@
 {
   "name": "react-umd",
-  "version": "0.0.2",
+  "version": "19.0.0",
   "main": "index.js",
   "files": [
     "dist/",
