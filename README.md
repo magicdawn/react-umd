@@ -18,6 +18,7 @@ But this is a complicate world, some places still use UMD.
 
 - https://unpkg.com/react-umd/dist/react.umd.js
 - https://unpkg.com/react-umd/dist/react-dom.umd.js
+- https://unpkg.com/react-umd/dist/react-dom-client.umd.js
 
 ## Todo
 
