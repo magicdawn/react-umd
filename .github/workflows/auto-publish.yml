@@ -5,13 +5,13 @@ on:
     - cron: '0 0 * * *' # Runs daily at midnight UTC
   workflow_dispatch: # Run workflow manually (without waiting for the cron to be called), through the Github Actions Workflow page directly
 
-permissions:
-  actions: 'write'
-  contents: 'write'
-
 jobs:
   check-update:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      actions: write
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
