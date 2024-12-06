@@ -1,8 +1,11 @@
 import { Configuration } from '@rspack/core'
+import fse from 'fs-extra'
 
 function defineConfig(...configs: Configuration[]) {
   return configs
 }
+
+fse.emptyDirSync(__dirname + '/dist')
 
 const minify = true
 
@@ -12,7 +15,7 @@ export default defineConfig(
       react: './src/react.ts',
     },
     output: {
-      clean: true,
+      // clean: true,
       filename: '[name].umd.js',
       library: {
         type: 'umd',
