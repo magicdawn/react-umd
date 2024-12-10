@@ -27,9 +27,11 @@ jobs:
 
       # 更新 package.json version 字段
       - name: Update package version
+        id: update_version
         run: |
           # 获取 react 版本号 (去掉 ^ 前缀)
           REACT_VERSION=$(node -p "require('./package.json').dependencies.react.replace('^', '')")
+          echo "REACT_VERSION=$REACT_VERSION" >> $GITHUB_OUTPUT
           # 更新 package.json version 字段
           npm version $REACT_VERSION --no-git-tag-version --allow-same-version
 
@@ -62,7 +64,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .
-          git diff --staged --quiet || git commit -m "deps: upgrade react to v$REACT_VERSION"
+          git diff --staged --quiet || git commit -m "deps: upgrade react to v${{ steps.update_version.outputs.REACT_VERSION }}"
 
       # 创建并推送 tag
       - name: Create tag
