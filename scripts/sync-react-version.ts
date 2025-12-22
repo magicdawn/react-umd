@@ -52,7 +52,7 @@ async function publishVersion(version: string, dev = true) {
   await $`git add package.json pnpm-lock.yaml`
   await $`git commit -m "deps: upgrade react to v${version}"`
   await $`git tag -f ${tagName}`
-  await $`git push origin main && git push origin --tags`
+  await $`git push -f origin main && git push -f origin ${tagName}`
 }
 
 if (import.meta.main) {
