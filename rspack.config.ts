@@ -6,7 +6,7 @@ import fse from 'fs-extra'
 
 export default defineConfig((env, argv) => {
   // clean dir
-  fse.emptyDirSync(__dirname + '/dist')
+  fse.emptyDirSync(import.meta.dirname + '/dist')
 
   // use `--mode development` to disable minify
   const shared: RspackOptions = {

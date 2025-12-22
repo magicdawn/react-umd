@@ -29,7 +29,7 @@ async function getVersions(pkg: string, minVersion = '19.0.0') {
 }
 
 async function publishVersion(version: string, dev = true) {
-  await $`pnpx ncu -u '@types/react*'` // always use latest @types/react*
+  await $`pnpx npm-check-updates -u '@types/react*'` // always use latest @types/react*
   await $`npm pkg set dependencies.react=^${version}` // use specific version of `react` & `react-dom`
   await $`npm pkg set dependencies.react-dom=^${version}`
   await $`pnpm install`
