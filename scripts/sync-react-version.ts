@@ -35,11 +35,13 @@ async function publishVersion(version: string, dev = true) {
   await $`pnpm install`
 
   let pkgVersion = version
-  let tagName = `v${version}`
+  let gitTagName = `v${version}`
+  let gitBranchName = `main`
   let publishExtraArgs: string[] = []
   if (dev) {
     pkgVersion = `${version}-dev.${dayjs().format('YYMMDDHHmm')}`
-    tagName = `v${version}-dev`
+    gitBranchName = 'dev'
+    gitTagName = `v${version}-dev`
     publishExtraArgs = ['--tag', 'dev']
   }
 
@@ -51,8 +53,8 @@ async function publishVersion(version: string, dev = true) {
   // git tag
   await $`git add package.json pnpm-lock.yaml`
   await $`git commit -m "deps: upgrade react to v${version}"`
-  await $`git tag -f ${tagName}`
-  await $`git push -f origin main && git push -f origin ${tagName}`
+  await $`git tag -f ${gitTagName}`
+  await $`git push -f origin ${gitBranchName} && git push -f origin ${gitTagName}`
 }
 
 if (import.meta.main) {
