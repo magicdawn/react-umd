@@ -29,11 +29,6 @@ async function getVersions(pkg: string, versionLt = '19.0.0') {
 }
 
 async function publishVersion(version: string, dev = true) {
-  await $`pnpx npm-check-updates -u '@types/react*'` // always use latest @types/react*
-  await $`npm pkg set dependencies.react=^${version}` // use specific version of `react` & `react-dom`
-  await $`npm pkg set dependencies.react-dom=^${version}`
-  await $`pnpm install`
-
   let pkgVersion = version
   let gitTagName = `v${version}`
   let gitBranchName = `main`
@@ -44,6 +39,16 @@ async function publishVersion(version: string, dev = true) {
     gitTagName = `v${version}-dev`
     publishExtraArgs = ['--tag', 'dev']
   }
+
+  const branch = (await $`git rev-parse --abbrev-ref HEAD`).stdout
+  if (branch !== gitBranchName) {
+    throw new Error(`current branch is ${branch}, should be ${gitBranchName}`)
+  }
+
+  await $`pnpx npm-check-updates -u '@types/react*'` // always use latest @types/react*
+  await $`npm pkg set dependencies.react=^${version}` // use specific version of `react` & `react-dom`
+  await $`npm pkg set dependencies.react-dom=^${version}`
+  await $`pnpm install`
 
   await $`npm pkg set version=${pkgVersion}`
 
