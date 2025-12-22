@@ -1,5 +1,8 @@
 name: auto-publish
 
+# for enable GitHub Actions
+# i = 0
+
 on:
   schedule: # Run workflow automatically
     - cron: '0 0 * * *' # Runs daily at midnight UTC
@@ -18,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: 'pnpm'
+          cache: pnpm
           registry-url: 'https://registry.npmjs.org'
 
       # update react

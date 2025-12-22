@@ -29,12 +29,14 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+    "execa": "^9.6.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@magicdawn/eslint-config": "^1.5.14",
     "@magicdawn/prettier-config": "^0.1.0",
+    "@npmcli/package-json": "^7.0.4",
     "@rspack/cli": "^1.6.8",
     "@rspack/core": "^1.6.8",
     "@swc/core": "^1.15.7",
@@ -45,6 +47,8 @@
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@typescript-eslint/parser": "^8.50.0",
     "@vitest/coverage-v8": "^4.0.16",
+    "axios": "^1.13.2",
+    "dayjs": "^1.11.19",
     "es-toolkit": "^1.43.0",
     "esbuild-register": "^3.6.0",
     "eslint": "^9.39.2",
@@ -52,7 +56,9 @@
     "fs-extra": "^11.3.3",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
+    "npmcli__package-json": "link:@types/@types/npmcli__package-json",
     "prettier": "^3.7.4",
+    "type-fest": "^5.3.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.16",
     "webpack-merge": "^6.0.1"
