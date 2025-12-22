@@ -1,13 +1,8 @@
-import fse from 'fs-extra'
+import { cpus } from 'node:os'
 import { defineConfig } from '@rspack/cli'
-import {
-  SwcJsMinimizerRspackPlugin,
-  type MultiRspackOptions,
-  type RspackOptions,
-} from '@rspack/core'
-import { cpus } from 'os'
-import { merge } from 'webpack-merge'
+import { SwcJsMinimizerRspackPlugin, type MultiRspackOptions, type RspackOptions } from '@rspack/core'
 import { pick } from 'es-toolkit'
+import fse from 'fs-extra'
 
 export default defineConfig((env, argv) => {
   // clean dir
