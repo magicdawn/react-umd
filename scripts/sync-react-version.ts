@@ -20,11 +20,11 @@ function compareVersionAsc(version1: string, version2: string) {
   return 0
 }
 
-async function getVersions(pkg: string, minVersion = '19.0.0') {
+async function getVersions(pkg: string, versionLt = '19.0.0') {
   const res = await request.get(`https://registry.npmjs.org/${pkg}`)
   const json = res.data as { versions: Record<string, PackageJson> }
   const versions = Object.keys(json.versions).filter((v) => /^\d+\.\d+\.\d+$/.test(v))
-  const versionsQueue = versions.filter((v) => compareVersionAsc(v, minVersion) > 0).toSorted(compareVersionAsc)
+  const versionsQueue = versions.filter((v) => compareVersionAsc(v, versionLt) > 0).toSorted(compareVersionAsc)
   return versionsQueue
 }
 
@@ -56,5 +56,10 @@ async function publishVersion(version: string, dev = true) {
 }
 
 if (import.meta.main) {
-  await publishVersion('19.0.1')
+  const currentVersion = (await import('../package.json')).default.version
+  const versions = await getVersions('react', currentVersion)
+  console.log(versions)
+  for (const v of versions) {
+    await publishVersion(v, false)
+  }
 }
