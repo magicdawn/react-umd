@@ -67,6 +67,7 @@ if (import.meta.main) {
   const versions = await getVersions('react', currentVersion)
   console.log(versions)
   for (const v of versions) {
-    await publishVersion(v, false)
+    const dev = process.env.DEV === 'true'
+    await publishVersion(v, dev)
   }
 }

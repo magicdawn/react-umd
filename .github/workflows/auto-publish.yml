@@ -7,6 +7,10 @@ on:
   schedule: # Run workflow automatically
     - cron: '0 0 * * *' # Runs daily at midnight UTC
   workflow_dispatch: # Run workflow manually (without waiting for the cron to be called), through the Github Actions Workflow page directly
+    debug_enabled:
+      type: boolean
+      description: Enable debug mode
+      required: true
 
 jobs:
   check-update:
@@ -16,78 +20,20 @@ jobs:
       actions: write
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: lts/*
           cache: pnpm
           registry-url: 'https://registry.npmjs.org'
 
-      # update react
-      - run: pnpx npm-check-updates -u 'react-*'
-      - run: pnpm install
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      # 更新 package.json version 字段
-      - name: Update package version
-        id: update_version
-        run: |
-          # 获取 react 版本号 (去掉 ^ 前缀)
-          REACT_VERSION=$(node -p "require('./package.json').dependencies.react.replace('^', '')")
-          echo "REACT_VERSION=$REACT_VERSION" >> $GITHUB_OUTPUT
-          # 更新 package.json version 字段
-          npm version $REACT_VERSION --no-git-tag-version --allow-same-version
+      - run: git checkout -b dev
+        if: ${{ github.event.inputs.debug_enabled }}
 
-      # check updated
-      - name: Check for changes
-        id: check_changes
-        run: |
-          if git diff --exit-code; then
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "No changes detected, exiting..."
-          else
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          fi
-
-      #
-      # 每天收到通知, 太 TM 烦了 ...
-      #
-      # - name: Early exit
-      #   if: steps.check_changes.outputs.has_changes == 'false'
-      #   run: |
-      #     gh run cancel ${{ github.run_id }}
-      #     gh run watch ${{ github.run_id }}
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # 下方为 直接 push 到目标分支, 当然你也可以选择 Pull Request 方式
-      - name: Commit files
-        if: ${{ fromJson(steps.check_changes.outputs.has_changes) }}
-        run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .
-          git diff --staged --quiet || git commit -m "deps: upgrade react to v${{ steps.update_version.outputs.REACT_VERSION }}"
-
-      # 创建并推送 tag
-      - name: Create tag
-        if: ${{ fromJson(steps.check_changes.outputs.has_changes) }}
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          git tag -f v$VERSION
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        if: ${{ fromJson(steps.check_changes.outputs.has_changes) }}
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          force: true
-          tags: true
-
-      # 发布到 npm
-      - name: Publish to NPM
-        if: ${{ fromJson(steps.check_changes.outputs.has_changes) }}
-        run: npm publish --provenance
+      - run: pnpx tsx ./scripts/sync-react-version.ts
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DEV: ${{ github.event.inputs.debug_enabled }}
