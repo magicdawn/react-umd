@@ -7,10 +7,11 @@ on:
   schedule: # Run workflow automatically
     - cron: '0 0 * * *' # Runs daily at midnight UTC
   workflow_dispatch: # Run workflow manually (without waiting for the cron to be called), through the Github Actions Workflow page directly
-    debug_enabled:
-      type: boolean
-      description: Enable debug mode
-      required: true
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: Enable debug mode
+        required: true
 
 jobs:
   check-update:

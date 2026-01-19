@@ -1,7 +1,10 @@
 import axios from 'axios'
 import dayjs from 'dayjs'
 import { execa } from 'execa'
+import { Logger } from 'tslog'
 import type { PackageJson } from 'type-fest'
+
+const logger = new Logger()
 
 const $ = execa({ stdio: 'inherit', verbose: 'short', shell: true })
 
@@ -65,9 +68,9 @@ async function publishVersion(version: string, dev = true) {
 if (import.meta.main) {
   const currentVersion = (await import('../package.json')).default.version
   const versions = await getVersions('react', currentVersion)
-  console.log(versions)
+  const dev = process.env.DEV === 'true'
+  logger.info('DEV: %s, current version: %s, new versions: %j', dev, currentVersion, versions)
   for (const v of versions) {
-    const dev = process.env.DEV === 'true'
     await publishVersion(v, dev)
   }
 }
