@@ -10,6 +10,8 @@ const $ = execa({ stdio: 'inherit', verbose: 'short', shell: true })
 
 const request = axios.create({ timeout: 10000 })
 
+const inGithubActions = !!process.env.GITHUB_ACTIONS
+
 function compareVersionAsc(version1: string, version2: string) {
   const v1 = version1.split('.')
   const v2 = version2.split('.')
@@ -43,7 +45,7 @@ async function publishVersion(version: string, dev = true) {
     publishExtraArgs = ['--tag', 'dev']
   }
 
-  const branch = (await $`git rev-parse --abbrev-ref HEAD`).stdout
+  const branch = (await execa`git branch --show-current`).stdout
   if (branch !== gitBranchName) {
     throw new Error(`current branch is ${branch}, should be ${gitBranchName}`)
   }
@@ -58,7 +60,11 @@ async function publishVersion(version: string, dev = true) {
   // publish
   await $`npm publish --access public ${publishExtraArgs}`
 
-  // git tag
+  // git commit & tag
+  if (process.env.GITHUB_ACTIONS) {
+    await $`git config user.name "github-actions[bot]"`
+    await $`git config user.email "41898282+github-actions[bot]@users.noreply.github.com"`
+  }
   await $`git add package.json pnpm-lock.yaml`
   await $`git commit -m "deps: upgrade react to v${version}"`
   await $`git tag -f ${gitTagName}`
