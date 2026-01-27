@@ -1,7 +1,7 @@
 {
   "name": "react-umd",
   "type": "module",
-  "version": "19.2.3",
+  "version": "19.2.4",
   "packageManager": "pnpm@10.28.0+sha512.05df71d1421f21399e053fde567cea34d446fa02c76571441bfc1c7956e98e363088982d940465fd34480d4d90a0668bc12362f8aa88000a64e83d0b0e47be48",
   "description": "umd build of react v19",
   "author": "magicdawn",
@@ -30,8 +30,8 @@
   },
   "dependencies": {
     "execa": "^9.6.1",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
     "@magicdawn/eslint-config": "^1.6.1",
@@ -42,7 +42,7 @@
     "@swc/core": "^1.15.8",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.0.9",
-    "@types/react": "^19.2.8",
+    "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.53.0",
     "@typescript-eslint/parser": "^8.53.0",
