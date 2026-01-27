@@ -4,13 +4,17 @@ import { execa } from 'execa'
 import { Logger } from 'tslog'
 import type { PackageJson } from 'type-fest'
 
-const logger = new Logger()
-
-const $ = execa({ stdio: 'inherit', verbose: 'short', shell: true })
-
-const request = axios.create({ timeout: 10000 })
-
+/* #region check env */
 const inGithubActions = !!process.env.GITHUB_ACTIONS
+
+if (process.env.DEV !== undefined && !['true', 'false'].includes(process.env.DEV)) {
+  throw new Error('process.env.DEV must be "true" or "false"')
+}
+/* #endregion */
+
+const logger = new Logger()
+const $ = execa({ stdio: 'inherit', verbose: 'short', shell: true })
+const request = axios.create({ timeout: 10000 })
 
 function compareVersionAsc(version1: string, version2: string) {
   const v1 = version1.split('.')
