@@ -53,7 +53,7 @@ async function publishVersion(version: string, dev = true) {
   await $`pnpx npm-check-updates -u '@types/react*'` // always use latest @types/react*
   await $`npm pkg set dependencies.react=^${version}` // use specific version of `react` & `react-dom`
   await $`npm pkg set dependencies.react-dom=^${version}`
-  await $`pnpm install`
+  await $`pnpm install --no-frozen-lockfile` // ignore default behavior: prevent update lockfile in CI
 
   await $`npm pkg set version=${pkgVersion}`
 
