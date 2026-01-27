@@ -1,7 +1,8 @@
 name: auto-publish
 
-# for enable GitHub Actions
-# i = 0
+# Inactivity – In public repos, Actions are automatically disabled after 60 days without activity on the default branch.
+# Making a commit can reactivate them.
+# now = 2026-01-27 14:00:41
 
 on:
   schedule: # Run workflow automatically
@@ -14,7 +15,7 @@ on:
         required: true
 
 jobs:
-  check-update:
+  auto-publish:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
