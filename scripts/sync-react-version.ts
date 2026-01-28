@@ -1,6 +1,7 @@
 import axios from 'axios'
 import dayjs from 'dayjs'
 import { execa } from 'execa'
+import semver from 'semver'
 import { Logger } from 'tslog'
 import type { PackageJson } from 'type-fest'
 
@@ -17,16 +18,7 @@ const $ = execa({ stdio: 'inherit', verbose: 'short', shell: true })
 const request = axios.create({ timeout: 10000 })
 
 function compareVersionAsc(version1: string, version2: string) {
-  const v1 = version1.split('.')
-  const v2 = version2.split('.')
-  const len = Math.max(v1.length, v2.length)
-  for (let i = 0; i < len; i++) {
-    const num1 = v1[i] ? Number.parseInt(v1[i], 10) : 0
-    const num2 = v2[i] ? Number.parseInt(v2[i], 10) : 0
-    if (num1 > num2) return 1
-    if (num1 < num2) return -1
-  }
-  return 0
+  return semver.compare(version1, version2)
 }
 
 async function getVersions(pkg: string, versionLt = '19.0.0') {
