@@ -1,2 +1,1 @@
-// @ts-ignore
-export * from 'react'
+module.exports = require('react')

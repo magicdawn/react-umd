@@ -1,1 +1,1 @@
-export * from 'react-dom/client'
+module.exports = require('react-dom/client')
