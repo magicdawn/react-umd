@@ -6,9 +6,9 @@ import type { PackageJson } from 'type-fest'
 
 /* #region check env */
 const inGithubActions = !!process.env.GITHUB_ACTIONS
-
-if (process.env.DEV !== undefined && !['true', 'false'].includes(process.env.DEV)) {
-  throw new Error('process.env.DEV must be "true" or "false"')
+// corn 触发的时候, process.env.DEV 是 ?
+if (![undefined, '', 'true', 'false'].includes(process.env.DEV)) {
+  throw new Error(`process.env.DEV must be one of ["true","false",undefined,""] , but got: ${process.env.DEV}`)
 }
 /* #endregion */
 
