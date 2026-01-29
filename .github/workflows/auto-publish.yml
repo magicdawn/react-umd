@@ -40,6 +40,6 @@ jobs:
       - run: git checkout -b dev
         if: ${{ inputs.debug_enabled }}
 
-      - run: pnpx tsx ./scripts/sync-react-version.ts
+      - run: pnpm tsx ./scripts/sync-react-version.ts
         env:
           DEV: ${{ inputs.debug_enabled }}
