@@ -18,6 +18,14 @@ But this is a complicate world, some places still use UMD.
 - https://unpkg.com/react-umd/dist/react-dom.umd.js
 - https://unpkg.com/react-umd/dist/react-dom-client.umd.js
 
+### Details
+
+| import entry       | unpkg url                                                | global variable             |
+| ------------------ | -------------------------------------------------------- | --------------------------- |
+| `react`            | https://unpkg.com/react-umd/dist/react.umd.js            | `globalThis.React`          |
+| `react-dom`        | https://unpkg.com/react-umd/dist/react-dom.umd.js        | `globalThis.ReactDOM`       |
+| `react-dom/client` | https://unpkg.com/react-umd/dist/react-dom-client.umd.js | `globalThis.ReactDOMClient` |
+
 ## License
 
 the MIT License http://magicdawn.mit-license.org
