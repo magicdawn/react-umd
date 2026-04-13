@@ -12,6 +12,8 @@ react v19 [#umd-builds-removed](https://react.dev/blog/2024/04/25/react-19-upgra
 
 But this is a complicate world, some places still use UMD.
 
+https://github.com/user-attachments/assets/a24df119-9a93-40c6-8e34-ab8b71dcdd81
+
 ## Usage
 
 - https://unpkg.com/react-umd/dist/react.umd.js
